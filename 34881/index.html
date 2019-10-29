@@ -1,0 +1,273 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="kangyuetao"><meta name="renderer" content="webkit"><meta name="copyright" content="kangyuetao"><meta name="keywords" content="欢迎飞跃技术博客"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>cookie和session · Mr.Kang's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">kangyuetao</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//kangyuetao.github.io/" target="_black">friend1</a></span><span><a href="//kangyuetao.github.io/" target="_black">friend2</a></span><span><a href="//kangyuetao.github.io/" target="_black">friend3</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.jpg);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">Mr.Kang's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">cookie和session</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2018-04-01</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="技术点"> 技术点</a></span></div><div class="post-intro-read"><span> Word count: <span class="post-count">1.2k</span> | Reading time: <span class="post-count">5</span>min</span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><p><font color="red" size="7">cookie和session</font></p>
+<ol>
+<li><p><font color="redsa" size="5">cookie</font></p>
+<ol>
+<li><p><font color="reds" size="4">cookie的使用方法</font></p>
+<ol>
+<li><p><font color="Fuchsia" size="3">设置cookie</font></p>
+<ul>
+<li><p>from django.shortcuts import render,HttpResponse</p>
+<p>​    def set_cookie(request):</p>
+<p><font size="3">        在HTTPResponse部分设置COOKIE值</font></p>
+<p>​        cookie_reponse = HttpResponse(‘这是一个关于cookie的测试’)<br>​        cookie_reponse.set_cookie(‘test’,’hello cookie’)<br>​        return cookie_reponse</p>
+</li>
+</ul>
+</li>
+<li><p><font color="Fuchsia" size="3">获取cookie</font></p>
+<ul>
+<li><p>def get_cookie(request):</p>
+<p><font size="3">    获取cookie值，从request属性中的COOKIE属性中</font></p>
+<p>​    cookie_data = request.COOKIES.get(‘test’)<br>​    return HttpResponse(‘Cookie值为:%s’ % cookie_data)</p>
+</li>
+</ul>
+</li>
+<li><p><font color="Fuchsia" size="3">删除cookie</font></p>
+<ul>
+<li>def delete_cookie(request):<br>response = HttpResponseRedirect(‘/check_cookie/‘)<pre><code>response.delete_cookie(&apos;test&apos;)
+return response</code></pre></li>
+</ul>
+</li>
+<li><p><font color="Fuchsia" size="3">怎么防止修改cookie</font></p>
+<ul>
+<li><p>使用set_signed_cookie这个函数进行防止用户在客户端进行修改(并不是直接给cookie加密)</p>
+</li>
+<li><p><font color="LightSalmon" size="3">代码：</font></p>
+<ul>
+<li><p>def check_salt_cookie(request):<br>try:</p>
+<pre><code>    salt_cookie = request.get_signed_cookie(key=&apos;salt_cookie&apos;,salt=&apos;nice&apos;)
+except KeyError: #获取不到该key值的Cookie
+    response = HttpResponse(&apos;正在设置一个salt Cookie值&apos;)
+    response.set_signed_cookie(key=&apos;salt_cookie&apos;,salt=&apos;nice&apos;,value=&apos;salt_cookie&apos;)</code></pre><p>​        return response<br>​    else: #获取到了对应key值，展示到新的HttpResonse中<br>​        return HttpResponse(‘获取到的salt Cookie值:%s’ % salt_cookie)</p>
+</li>
+<li><p><font color="lightred" size="3">注意：</font></p>
+<ul>
+<li>因为第一次访问时没有添加cookie值所以就会有keyerror的错误</li>
+<li>当有了这个错误你就设置cookie就可以了</li>
+<li>当你刷新页面的时候已经有了cookie值所以直接获取加盐的cookie</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><p><font color="redsa" size="5">session</font></p>
+<ol>
+<li><p><font color="reds" size="4">session的使用方法</font></p>
+<ol>
+<li><p><font color="Fuchsia" size="3">使用流程</font></p>
+<ul>
+<li>客户端访问服务端，服务端为每一个客户端返回一个唯一的 sessionid ，比如 xxx 。</li>
+<li>客户端需要保持某些状态，比如维持登陆。那么服务端会构造一个 {sessionid: xxx } 类似这样的字典数据加到 Cookie 中发送给用户。注意此时，只是一个随机字符串，返回给客户端的内容并不会像之前一样包含实际数据。</li>
+<li>服务端在后台把返回给客户端的 xxx 字符串作为 key 值，对应需要保存的服务端数据为一个新的字典，存储在<br>服务器上，例如： {xxx : {id:1}}</li>
+<li><font color="lightred" size="3">注意：</font><ol>
+<li>默认存储在数据库的 Session 数据，是通过 base64 编码的，我们可以通过 Python 的<br>base64 模块下的 b64decode() 解码得到原始数据</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p><font color="Fuchsia" size="3">获取需要的session</font></p>
+<ul>
+<li>session_data = request.session.get(Key)</li>
+<li>session_data = request.session[Key]</li>
+<li><font color="lightred" size="3">注意：</font><ol>
+<li>在 Session 中获取对应值， get 方法获取时，如不存在该 Key 值，不会引发异常，返回 None<br>而第二种直接通过字典获取，如 Key 值不存在，引发 KeyErro</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><p><font color="Fuchsia" size="3">删除session</font></p>
+<ul>
+<li>del request.seesion[Key]<ol>
+<li>删除对应session， Key 值不存在时，引发 KeyError</li>
+</ol>
+</li>
+<li>request.session.clear()<ol>
+<li>清空 Session 中的所有数据。这里客户端还会保留 sessionid<br>只不过在服务端 sessionid 对应的数据没有了。</li>
+</ol>
+</li>
+<li>request.session.flush()<ol>
+<li>直接删除当前客户端的的Seesion数据。这里不光服务端sessionid对应的数据没有了，客户端的<br>sessionid也会被删除</li>
+</ol>
+</li>
+</ul>
+<ol>
+<li><font color="LightCoral" size="3">代码：</font><ul>
+<li>def delete_session(request):<br>if request.session.get(‘test_id’):<pre><code>    del request.session[&apos;test_id&apos;]
+    return HttpResponse(&apos;Session被删了&apos;)
+else:
+    return HttpResponse(&apos;目前没有任何需要删除的session&apos;)</code></pre></li>
+<li><font color="lightred" size="3">注意：</font><ul>
+<li>这里使用 del request.session[Key] 的方式来进行 Session 的删除</li>
+<li>如果存在对应 test_id 的 Session 值则删除，反之返回一个字符串</li>
+</ul>
+</li>
+<li><font color="lightred" size="3">总结：</font><ol>
+<li>使用的是 del 的针对性删除方式，这样不会将整个客户端的 session 删除掉</li>
+<li>使用 request.session.clear() ，只是清空了服务端 Session 中的数据，但是客户端的 Cookie 中还会保存sessionid ，只不过这个值对应的字符串所对应的用户数据是一个空</li>
+<li>使用 request.session.flush() ，那么客户端 Cookie 中保存的 sessionid 首先会被删除，其次通过<br>sessionid 值保存的用户数据也会被全部删除。</li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+<li><p><font color="Fuchsia" size="3">如何设置有效期设置cookie</font></p>
+<ol>
+<li><font color="LightCoral" size="4">设置Session的有效时间</font><ul>
+<li>value ：有效时间</li>
+<li>为整数时：将在value为秒单位之后过期</li>
+<li>为0时：将在用户关闭浏览器之后过期。</li>
+<li>为None时：使用全局过期的设置，默认为两个星期，14天。</li>
+<li>为datetime时：在这个指定时间后过期。</li>
+</ul>
+</li>
+<li><font color="LightCoral" size="4">返回距离过期还剩下的秒数</font><ul>
+<li><font color="LightCoral" size="3">代码：</font><ol>
+<li>request.session.get_expiry_age()</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><font color="LightCoral" size="4">清除过期的 Session 会话</font><ul>
+<li><font color="LightCoral" size="3">代码：</font><ol>
+<li>request.session.clear_expired()</li>
+</ol>
+</li>
+</ul>
+</li>
+<li><font color="LightCoral" size="4">代码展示：</font><ul>
+<li>from django.shortcuts import render,HttpResponse<br>import datetime<br>def set_session(request):<pre><code>if request.session.get(&apos;test_id&apos;):
+    session_data = request.session.get(&apos;test_id&apos;)# 用户拿到的的session随机字符串
+    session_key = request.session.session_key # 获取客户端浏览器中的SessionID值
+    session_expire = request.session.get_expiry_age()
+    now = datetime.datetime.now()
+    expire_time = now + datetime.timedelta(seconds=session_expire)
+    response = &apos;&lt;div&gt;SessionID : %s&lt;/div&gt;&apos; % session_key + \
+               &apos;&lt;div&gt;Session : %s&lt;/div&gt;&apos; % session_data + \
+               &apos;&lt;div&gt;ExpireTime : %s&lt;/div&gt;&apos; % expire_time
+    return HttpResponse(response)
+else:
+    request.session[&apos;test_id&apos;] = &apos;TEST&apos;
+    request.session.set_expiry(None)
+    return HttpResponse(&apos;已设置好Session&apos;)</code></pre></li>
+<li><font color="lightred" size="3">注意：</font><ol>
+<li>用户在第一次访问时，会走 else 分支</li>
+<li>因为此时还没有任何服务端的 Session 及客户端的 Cookie 值设定</li>
+<li>所以我们通过 request.session[Key] 的方式来设置一个 Session 值，值为 TEST</li>
+<li>当用户第二次访问时将展示出所设置好的Session值及在客户端浏览器中存储的sessionid</li>
+</ol>
+</li>
+</ul>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://kangyuetao.github.io">kangyuetao</a></p><p> <span>Link:  </span><a href="https://kangyuetao.github.io/34881/">https://kangyuetao.github.io/34881/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/40641/" title="随机数模块"><span>< PreviousPost</span><br><span class="prevTitle">随机数模块</span></a><a class="nextSlogan" href="/63709/" title="python花式读取大文件"><span>NextPost ></span><br><span class="nextTitle">python花式读取大文件</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i><script type="text/javascript" src="/js/xiantiao.js"></script>
+<script type="text/javascript" src="/js/click.js"></script></body></html>

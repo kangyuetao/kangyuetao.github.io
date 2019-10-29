@@ -1,0 +1,137 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="kangyuetao"><meta name="renderer" content="webkit"><meta name="copyright" content="kangyuetao"><meta name="keywords" content="欢迎飞跃技术博客"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Vue基于vue-quill-editor富文本编辑器使用心得 · Mr.Kang's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">kangyuetao</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//kangyuetao.github.io/" target="_black">friend1</a></span><span><a href="//kangyuetao.github.io/" target="_black">friend2</a></span><span><a href="//kangyuetao.github.io/" target="_black">friend3</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.jpg);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">Mr.Kang's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">Vue基于vue-quill-editor富文本编辑器使用心得</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2018-05-16</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="vue"> vue</a></span></div><div class="post-intro-read"><span> Word count: <span class="post-count">870</span> | Reading time: <span class="post-count">4</span>min</span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h1 id="Vue基于vue-quill-editor富文本编辑器使用心得"><a href="#Vue基于vue-quill-editor富文本编辑器使用心得" class="headerlink" title="Vue基于vue-quill-editor富文本编辑器使用心得"></a>Vue基于vue-quill-editor富文本编辑器使用心得</h1><p>现在市面上有很多的富文本编辑器，我个人还是非常推荐Vue自己家的vue-quill-deitor，虽然说只支持IE10+,但这种问题，甩给别人吧！</p>
+<p>那么我们直击正题，在vue中使用quill呢，我们需要npm进行安装，安装命令如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install vue-quill-editor</span><br></pre></td></tr></table></figure>
+
+<p> 再安装依赖项</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm install quill</span><br></pre></td></tr></table></figure>
+
+<p>使用:</p>
+<p>在main.js中进行引入</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> Vue <span class="keyword">from</span> <span class="string">'vue'</span></span><br><span class="line"><span class="keyword">import</span> VueQuillEditor <span class="keyword">from</span> <span class="string">'vue-quill-editor'</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">'quill/dist/quill.core.css'</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">'quill/dist/quill.snow.css'</span></span><br><span class="line"><span class="keyword">import</span> <span class="string">'quill/dist/quill.bubble.css'</span></span><br><span class="line">  </span><br><span class="line">Vue.use(VueQuillEditor)</span><br></pre></td></tr></table></figure>
+
+<p>下面的css一定还要引用，否则编辑器将会没有css。</p>
+<p>在vue页面中代码如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br></pre></td><td class="code"><pre><span class="line">&lt;template&gt;</span><br><span class="line">  &lt;div class="edit_container"&gt;</span><br><span class="line">        &lt;quill-editor </span><br><span class="line">            v-model=<span class="string">"content"</span> </span><br><span class="line">            ref=<span class="string">"myQuillEditor"</span> </span><br><span class="line">            :options=<span class="string">"editorOption"</span> </span><br><span class="line"><span class="meta">            @blur="onEditorBlur($event)" @focus="onEditorFocus($event)"</span></span><br><span class="line"><span class="meta">            @change="onEditorChange($event)"&gt;</span></span><br><span class="line">        &lt;/quill-editor&gt;</span><br><span class="line">        &lt;button v-on:click="saveHtml"&gt;保存&lt;/button&gt;</span><br><span class="line">    &lt;/div&gt;  </span><br><span class="line">&lt;/template&gt;</span><br><span class="line"></span><br><span class="line">&lt;script&gt;</span><br><span class="line">export default &#123;</span><br><span class="line">  name: <span class="string">'App'</span>,</span><br><span class="line">  data()&#123;</span><br><span class="line">     <span class="keyword">return</span> &#123;</span><br><span class="line">            content: `&lt;p&gt;hello world&lt;/p&gt;`,</span><br><span class="line">            editorOption: &#123;&#125;</span><br><span class="line">        &#125;</span><br><span class="line">  &#125;,computed: &#123;</span><br><span class="line">        editor() &#123;</span><br><span class="line">            <span class="keyword">return</span> this.$refs.myQuillEditor.quill;</span><br><span class="line">        &#125;,</span><br><span class="line">    &#125;,methods: &#123;</span><br><span class="line">        onEditorReady(editor) &#123; // 准备编辑器</span><br><span class="line">        &#125;,</span><br><span class="line">        onEditorBlur()&#123;&#125;, // 失去焦点事件</span><br><span class="line">        onEditorFocus()&#123;&#125;, // 获得焦点事件</span><br><span class="line">        onEditorChange()&#123;&#125;, // 内容改变事件</span><br><span class="line">        saveHtml:function(event)&#123;</span><br><span class="line">          alert(this.content);</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/script&gt;</span><br><span class="line"></span><br><span class="line">&lt;style&gt;</span><br><span class="line"><span class="comment">#app &#123;</span></span><br><span class="line">  font-family: <span class="string">'Avenir'</span>, Helvetica, Arial, sans-serif;</span><br><span class="line">  -webkit-font-smoothing: antialiased;</span><br><span class="line">  -moz-osx-font-smoothing: grayscale;</span><br><span class="line">  text-align: center;</span><br><span class="line">  color: <span class="comment">#2c3e50;</span></span><br><span class="line">  margin-top: <span class="number">60</span>px;</span><br><span class="line">&#125;</span><br><span class="line">&lt;/style&gt;</span><br></pre></td></tr></table></figure>
+
+<p> 其中的v-model就是我们自己的html代码，你可以将这个html直接放到数据库，这样也就没有什么问题了。如果想要禁用编辑器可以通过以下代码：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">onEditorFocus(val,editor)&#123; // 富文本获得焦点时的事件</span><br><span class="line">      console.log(val); // 富文本获得焦点时的内容</span><br><span class="line">      editor.enable(false); // 在获取焦点的时候禁用</span><br><span class="line">    &#125;</span><br></pre></td></tr></table></figure>
+
+<p> 主题设置</p>
+<p>在vue项目中，具体引入Quill的文件中，需要使用哪种主题就写哪个。默认是snow主题的。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">data()&#123;</span><br><span class="line">    <span class="keyword">return</span> &#123;</span><br><span class="line">           content: `&lt;p&gt;hello world&lt;/p&gt;`,</span><br><span class="line">           editorOption: &#123;</span><br><span class="line">             theme:<span class="string">'snow'</span></span><br><span class="line">           &#125;</span><br><span class="line">       &#125;</span><br><span class="line"> &#125;</span><br></pre></td></tr></table></figure>
+
+<p>工具栏设置</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">modules:&#123;</span><br><span class="line">            toolbar:[</span><br><span class="line">              [<span class="string">'bold'</span>, <span class="string">'italic'</span>, <span class="string">'underline'</span>, <span class="string">'strike'</span>],    //加粗，斜体，下划线，删除线</span><br><span class="line">              [<span class="string">'blockquote'</span>, <span class="string">'code-block'</span>],     //引用，代码块</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">              [&#123; <span class="string">'header'</span>: <span class="number">1</span> &#125;, &#123; <span class="string">'header'</span>: <span class="number">2</span> &#125;],        // 标题，键值对的形式；<span class="number">1</span>、<span class="number">2</span>表示字体大小</span><br><span class="line">              [&#123; <span class="string">'list'</span>: <span class="string">'ordered'</span>&#125;, &#123; <span class="string">'list'</span>: <span class="string">'bullet'</span> &#125;],     //列表</span><br><span class="line">              [&#123; <span class="string">'script'</span>: <span class="string">'sub'</span>&#125;, &#123; <span class="string">'script'</span>: <span class="string">'super'</span> &#125;],   // 上下标</span><br><span class="line">              [&#123; <span class="string">'indent'</span>: <span class="string">'-1'</span>&#125;, &#123; <span class="string">'indent'</span>: <span class="string">'+1'</span> &#125;],     // 缩进</span><br><span class="line">              [&#123; <span class="string">'direction'</span>: <span class="string">'rtl'</span> &#125;],             // 文本方向</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">              [&#123; <span class="string">'size'</span>: [<span class="string">'small'</span>, false, <span class="string">'large'</span>, <span class="string">'huge'</span>] &#125;], // 字体大小</span><br><span class="line">              [&#123; <span class="string">'header'</span>: [<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, false] &#125;],     //几级标题</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">              [&#123; <span class="string">'color'</span>: [] &#125;, &#123; <span class="string">'background'</span>: [] &#125;],     // 字体颜色，字体背景颜色</span><br><span class="line">              [&#123; <span class="string">'font'</span>: [] &#125;],     //字体</span><br><span class="line">              [&#123; <span class="string">'align'</span>: [] &#125;],    //对齐方式</span><br><span class="line">  </span><br><span class="line">  </span><br><span class="line">              [<span class="string">'clean'</span>],    //清除字体样式</span><br><span class="line">              [<span class="string">'image'</span>,<span class="string">'video'</span>]    //上传图片、上传视频</span><br><span class="line">  </span><br><span class="line">            ]</span><br><span class="line">          &#125;,</span><br><span class="line">          theme:<span class="string">'snow'</span></span><br><span class="line">        &#125;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+
+<p>图片推拽上传</p>
+<p>需要安装  quill-image-drop-module 模块，那么改一下imageDrop设置为true，你就可以把你电脑上的图片网上一坨就可以了。 </p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> &#123; quillEditor &#125; <span class="keyword">from</span> <span class="string">'vue-quill-editor'</span></span><br><span class="line"><span class="keyword">import</span> * <span class="keyword">as</span> Quill <span class="keyword">from</span> <span class="string">'quill'</span> //引入编辑器</span><br><span class="line"><span class="keyword">import</span> &#123; ImageDrop &#125; <span class="keyword">from</span> <span class="string">'quill-image-drop-module'</span>;</span><br><span class="line">Quill.register(<span class="string">'modules/imageDrop'</span>, ImageDrop);</span><br><span class="line">export default &#123;</span><br><span class="line">  name: <span class="string">'App'</span>,</span><br><span class="line">  data()&#123; </span><br><span class="line">     <span class="keyword">return</span>&#123;</span><br><span class="line">        editorOption:&#123;</span><br><span class="line">          modules:&#123;</span><br><span class="line">            imageDrop:true, </span><br><span class="line">          &#125;,</span><br><span class="line">          theme:<span class="string">'snow'</span></span><br><span class="line">        &#125;</span><br><span class="line">      &#125;</span><br><span class="line">  &#125;</span><br></pre></td></tr></table></figure>
+
+<p>那上传文件那你就不用想了，你也许想先把图片放上去，其实这个文件托上去就已经是个base64了，等你在前台读数的时候直接decode就好~</p>
+<img src="/images/1.png" height="600px">
+
+<p>图片调整大小ImageResize</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">return</span>&#123;</span><br><span class="line">       editorOption:&#123;</span><br><span class="line">         modules:&#123;</span><br><span class="line">　　　　　　　　imageResize: &#123;&#125;</span><br><span class="line">         &#125;,</span><br><span class="line">         theme:<span class="string">'snow'</span></span><br><span class="line">       &#125;</span><br><span class="line">     &#125;</span><br></pre></td></tr></table></figure>
+
+<p>以上就是我对vue-quill-editor的认识，觉得对你有帮助的，给个推荐吧！</p>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://kangyuetao.github.io">kangyuetao</a></p><p> <span>Link:  </span><a href="https://kangyuetao.github.io/9426/">https://kangyuetao.github.io/9426/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/57585/" title="WebStorage是什么"><span>< PreviousPost</span><br><span class="prevTitle">WebStorage是什么</span></a><a class="nextSlogan" href="/40641/" title="随机数模块"><span>NextPost ></span><br><span class="nextTitle">随机数模块</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#Vue基于vue-quill-editor富文本编辑器使用心得"><span class="toc-number">1.</span> <span class="toc-text">Vue基于vue-quill-editor富文本编辑器使用心得</span></a></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i><script type="text/javascript" src="/js/xiantiao.js"></script>
+<script type="text/javascript" src="/js/click.js"></script></body></html>

@@ -1,0 +1,150 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="kangyuetao"><meta name="renderer" content="webkit"><meta name="copyright" content="kangyuetao"><meta name="keywords" content="欢迎飞跃技术博客"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Mr.Kang's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">kangyuetao</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//kangyuetao.github.io/" target="_black">friend1</a></span><span><a href="//kangyuetao.github.io/" target="_black">friend2</a></span><span><a href="//kangyuetao.github.io/" target="_black">friend3</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.jpg);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">Mr.Kang's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1>Mr.Kang's Blog</h1><h5>Welcome to my Blog!</h5><div class="intro-social"></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><section id="recent-posts"><div class="recent-post-item"><div class="post-title"><a href="/2533/">Redis的哨兵机制 或者心跳机制 模式 原理详解</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2019-09-17T07:21:46.000Z">2019-09-17</time></div><div class="recent-post-content">一.什么是哨兵机制?答：Redis的哨兵(sentinel) 系统用于管理多个 Redis 服务器,该系统执行以下三个任务:       监控(Monitoring): 哨兵(sentinel) 会不断地检查你的Master和Slave是否运作正常。       提醒(Notification):当被监控的某个 Redis出现问题时, 哨兵(sentinel) 可以通过 API 向管理员或者其他应用程序发送通知。
+​      自动故障迁移(Automatic failover):当一个Master不能正常工作时，哨兵(sentinel) 会开始一次自动故障迁移操作,它会将失效Master的其 ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="redis"> redis</a></div><div class="read-more"><a class="more" href="/2533/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/14600/">微服务和RPC框架</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2019-06-06T00:39:35.000Z">2019-06-06</time></div><div class="recent-post-content">什么是微服务一般情况下，业务应用我们都会采用模块化的分层式架构，所有的业务逻辑代码最终会在一个代码库中并统一部署，我们称这种应用架构为单体应用。 单体应用的问题是，全部开发人员会共享一个代码库，不同模块的边界模糊，实现高内聚、松耦合极其困难。 肯定大家会碰到过这类场景，当尝试去重构改进代码时，改了一个地方好几个其他模块也需要同步改动， 当初划分的模块边界轻易被穿透，有人给这种应用的架构起了一个很形象的名字叫 “洋葱架构”。
+特点：1、服务注册、服务发现、健康检查
+如果我们采用进程内LB方案，那么服务自注册一般统一做在服务器端框架中，健康检查逻辑由具体业务服务定制，框架层提供调用健康检查逻辑的机 ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="技术点"> 技术点</a></div><div class="read-more"><a class="more" href="/14600/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/19284/">JSON Web Token</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2019-05-12T15:34:32.000Z">2019-05-12</time></div><div class="recent-post-content">首先下载：
+​    pip install pyjwt
+JWT 特点 体积小，因而传输速度快
+传输方式多样，可以通过URL/POST参数/HTTP头部等方式传输
+严格的结构化。它自身（在 payload 中）就包含了所有与用户相关的验证消息，如用户可访问路由、访问有效期等信息，服务器无需再去连接数据库验证信息的有效性，并且 payload 支持为你的应用而定制化。
+支持跨域验证，可以应用于单点登录。
+JWT是Auth0提出的通过对JSON进行加密签名来实现授权验证的方案，编码之后的JWT看起来是这样的一串字符：
+1eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.ey ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="JWT"> JWT</a></div><div class="read-more"><a class="more" href="/19284/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/7569/">nginx主机宕机解决方案</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2019-02-21T14:11:20.000Z">2019-02-21</time></div><div class="recent-post-content">使用Docker-compose搭建nginx-keepalived双机热备来实现高可用nginx集群最近一直在想一个问题，如果使用nginx反向代理tornado，部署了多台机器，如果主机也就是部署了nginx那台机器并发过大导致宕机了怎么办？
+想必大家也都明白 ，不考虑带宽峰值的话，比较新的 CPU 跑 nginx 单核每秒能接近 2 万请求，而且nginx如果纯做 HTTP 转发的话，Nginx 的性能高到恐怖，会挂掉很不科学。。。。
+那如果插头被踢掉了怎么办，机房断电之类的原因，因为没电导致服务器宕机。但话又说回来，服务器用的阿里云的话，难道阿里云机房也会断电。。。你特么在逗我吧。。。 ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="技术点"> 技术点</a></div><div class="read-more"><a class="more" href="/7569/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/56600/">在centos7.6上利用docker-compose统一管理容器和服务</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2019-01-09T15:34:57.000Z">2019-01-09</time></div><div class="recent-post-content">​    众所周知，一个大型的Docker容器组成的微服务应用中，容器的数量是非常巨大的，如果依赖传统的人工配置方式进行维护，对于开发和运维来说简直就是噩梦。docker-compose的出现正是为了解决这个问题。
+​    docker-compose是一个用于定义和运行多容器Docker应用的工具，只需要一个Compose的配置文件和一个简单的命令就可以创建并运行应用所需的所有容器。在配置文件中，所有容器通过services来定义，并使用docker-compose命令启动或停止容器以及所有依赖容器。
+​    如何安装请参照这篇文章:在Centos7.6上部署Docker环境以及安装do ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Docker"> Docker</a></div><div class="read-more"><a class="more" href="/56600/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/56601/">在Centos7.6上部署Docker环境以及安装docker-compose</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2019-01-07T16:26:20.000Z">2019-01-08</time></div><div class="recent-post-content">​    毫无疑问，Docker目前是现阶段最为火爆的容器技术了，它在业务解耦和拆分业务层面有着不可忽视的作用，而使用 Docker Compose 可以轻松、高效的管理容器，它是一个用于定义和运行多容器 Docker 的应用程序工具，这里记录一下如何在centos7.6上部署Docker以及docker-compose。
+12345678910111213141516171819#升级yumsudo yum update#卸载旧版本dockersudo yum remove docker  docker-common docker-selinux docker-engine#安装依赖sudo ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Docker"> Docker</a></div><div class="read-more"><a class="more" href="/56601/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/56408/">Docker的安装与基本使用</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2019-01-07T15:34:50.000Z">2019-01-07</time></div><div class="recent-post-content">DockerDocker的思想来自于集装箱，集装箱解决了什么问题？在一艘大船上，可以把货物规整的摆放起来。并且各种各样的货物被集装箱标准化了，集装箱和集装箱之间不会互相影响。那么我就不需要专门运送水果的船和专门运送化学品的船了。只要这些货物在集装箱里封装的好好的，那我就可以用一艘大船把他们都运走。docker就是类似的理念。现在都流行云计算了，云计算就好比大货轮。docker就是集装箱。
+1.不同的应用程序可能会有不同的应用环境，比如.net开发的网站和php开发的网站依赖的软件就不一样，如果把他们依赖的软件都安装在一个服务器上就要调试很久，而且很麻烦，还会造成一些冲突。比如IIS和Apach ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="Docker"> Docker</a></div><div class="read-more"><a class="more" href="/56408/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/57585/">WebStorage是什么</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2018-05-20T10:35:58.000Z">2018-05-20</time></div><div class="recent-post-content">WebStorage使用HTML5可以在本地存储用户的浏览数据。早些时候,本地存储使用的是 cookie。但是Web 存储需要更加的安全与快速，这些数据不会被保存在服务器上，但是这些数据只用于用户请求网站数据上。它也可以存储大量的数据，而不影响网站的性能。数据以 键/值 对存在, web网页的数据只允许该网页访问使用。
+Web Storage的目的是为了克服由cookie带来的一些限制，当数据需要被严格控制在客户端上时，无须持续地将数据发回服务器。Web Storage的两个主要目标是：
+
+提供一种在cookie之外存储会话数据的途径。
+提供一种存储大量可以跨会话存在的数据的机制。
+
+Web  ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="技术点"> 技术点</a></div><div class="read-more"><a class="more" href="/57585/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/9426/">Vue基于vue-quill-editor富文本编辑器使用心得</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2018-05-16T09:03:18.000Z">2018-05-16</time></div><div class="recent-post-content">Vue基于vue-quill-editor富文本编辑器使用心得现在市面上有很多的富文本编辑器，我个人还是非常推荐Vue自己家的vue-quill-deitor，虽然说只支持IE10+,但这种问题，甩给别人吧！
+那么我们直击正题，在vue中使用quill呢，我们需要npm进行安装，安装命令如下：
+1npm install vue-quill-editor
+
+ 再安装依赖项
+1npm install quill
+
+使用:
+在main.js中进行引入
+1234567import Vue from 'vue'import VueQuillEditor from 'vue-quill-editor'im ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="vue"> vue</a></div><div class="read-more"><a class="more" href="/9426/#more">ReadMore</a></div><hr></div><div class="recent-post-item"><div class="post-title"><a href="/40641/">随机数模块</a></div><div class="post-time"><i class="fa fa-table"></i><time datetime="2018-04-18T15:24:30.000Z">2018-04-18</time></div><div class="recent-post-content">随机数模块Python中，有一个叫做random的内置模块，可以很方便的为我们生成各式的随机数据
+随机整数
+random.randrange( stop )
+
+返回从0-stop区间内的随机整数
+
+
+
+12&gt;&gt;&gt; random.randrange(20)7
+
+
+
+random.randrange( start, stop, step )
+
+返回从start-stop区间内，并且步长为step的一个整数，类似range函数
+
+
+
+12345678&gt;&gt;&gt; random.randrange(0,10,3)3&gt;&gt;&gt; random.randrange ...</div><div class="recent-post-tags"><a class="post-tag fa fa-tag" href="javascript:void(0)" date-tags="技术点"> 技术点</a></div><div class="read-more"><a class="more" href="/40641/#more">ReadMore</a></div><hr></div></section><nav class="cxo-page-nav"><span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="page-number" href="/page/3/">3</a><a class="extend next" rel="next" href="/page/2/">NEXT &#62;</a></nav></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i><script type="text/javascript" src="/js/xiantiao.js"></script>
+<script type="text/javascript" src="/js/click.js"></script></body></html>

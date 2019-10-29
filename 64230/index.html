@@ -1,0 +1,338 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="kangyuetao"><meta name="renderer" content="webkit"><meta name="copyright" content="kangyuetao"><meta name="keywords" content="欢迎飞跃技术博客"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>mysql基本操作 · Mr.Kang's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">kangyuetao</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//kangyuetao.github.io/" target="_black">friend1</a></span><span><a href="//kangyuetao.github.io/" target="_black">friend2</a></span><span><a href="//kangyuetao.github.io/" target="_black">friend3</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.jpg);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">Mr.Kang's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">mysql基本操作</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2016-01-11</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="mysql"> mysql</a></span></div><div class="post-intro-read"><span> Word count: <span class="post-count">4.3k</span> | Reading time: <span class="post-count">16</span>min</span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><p>在日常应用中可能一时想不起来，所以有必要整理一份 指令相关的笔记，以是个人比较满意，也比较全面的一份笔记，希望能帮到你，适用初级小白，大神可略过！</p>
+<h2 id="MYSQL常用命令："><a href="#MYSQL常用命令：" class="headerlink" title="MYSQL常用命令："></a><strong>MYSQL常用命令</strong>：</h2><p><strong>数据备份与还原</strong><br><strong>注意：不要打分号，不登陆mysql 直接在cmd下运行</strong></p>
+<p><strong>1、备份</strong>：</p>
+<ul>
+<li>mysqldump -uroot -p123 要备份的数据库名&gt;生成的脚本路径</li>
+</ul>
+<p><strong>2、恢复</strong>：</p>
+<ul>
+<li><p>source 脚本文件路径</p>
+</li>
+<li><p>端口号为：3306</p>
+</li>
+<li><p>默认存储引擎：innodb</p>
+</li>
+<li><p>默认字符集：utf-8</p>
+</li>
+</ul>
+<h3 id="MYSQL开启关闭及查询时间版本指令："><a href="#MYSQL开启关闭及查询时间版本指令：" class="headerlink" title="MYSQL开启关闭及查询时间版本指令："></a>MYSQL开启关闭及查询时间版本指令：</h3><ul>
+<li>开启MySQL服务 net start mysql 或 sudo service mysql start</li>
+<li>重启服务 sudo service mysql restart</li>
+<li>查看看进程中是否存在mysql服务 ps ajx|grep mysql</li>
+<li>进入mysql数据库控制台命令： mysql -u用户名 -p密码</li>
+<li>查看版本命令： select version();</li>
+<li>显示当前时间命令： select now();</li>
+<li>退出MySQL命令： quit或exit</li>
+<li>结束MySQL服务 net stop mysql 或 sudo service mysql stop</li>
+</ul>
+<h3 id="修改用户名及密码相关指令："><a href="#修改用户名及密码相关指令：" class="headerlink" title="修改用户名及密码相关指令："></a>修改用户名及密码相关指令：</h3><p>​        1、修改密码格式命令： set password for 用户名@localhost = password(‘新密码’);</p>
+<p>​        2、修改密码格式命令： mysqladmin -u用户名 -p旧密码 password 新密码；</p>
+<p><strong>修改用户名命令</strong>：</p>
+<p>​    进入mysql库： use mysql;<br>​    然后输入： update user set user =’新用户名’ where user =’旧用户名’；</p>
+<h3 id="创建库的相关指令："><a href="#创建库的相关指令：" class="headerlink" title="创建库的相关指令："></a><strong>创建库的相关指令</strong>：</h3><ul>
+<li><p>创建数据库命令： create database 数据库名 charset=utf8;</p>
+</li>
+<li><p>显示所有的数据库： show databases；</p>
+</li>
+<li><p>删除数据库命令： drop database 数据库名；</p>
+</li>
+<li><p>导入（连接）数据库命令： use 数据库名</p>
+</li>
+<li><p>查看当前使用的数据库命令： select database();</p>
+</li>
+<li><p>当前数据库包含的表信息命令： show tables;</p>
+</li>
+<li><p>show create table 表名; 展示详细属性</p>
+</li>
+</ul>
+<h3 id="建表相关指令："><a href="#建表相关指令：" class="headerlink" title="建表相关指令："></a>建表相关指令：</h3><ul>
+<li>创建表命令： create table 表名 ((字段名 类型 属性)，(字段名 类型 属性));</li>
+<li>修改表名： alter table 表名 rename to 新表名；</li>
+<li>获取表结构命令： desc 表名； 或者 show columns from 表名；</li>
+<li>删除表命令： drop table 表名；</li>
+<li>修改字段命令： alter table 表名 change 原字段名 新字段名 数据类型;</li>
+<li>修改数据类型命令： alter table 表名 modify 字段名 新数据类型;</li>
+<li>删除一个字段命令： alter table 表名 drop 字段名;</li>
+<li>将字段1放在字段2后面命令： alter table 表名 modify 字段名1 数据类型 after 字段名2；</li>
+</ul>
+<h3 id="插入数据相关命令："><a href="#插入数据相关命令：" class="headerlink" title="插入数据相关命令："></a>插入数据相关命令：</h3><ul>
+<li>插入数据命令： insert into 表名 values (添加的数据,) #按列表竖列类型添加以，分隔<br>insert into 表名 (字段,字段) values (添加的数据,)</li>
+<li>查看表中所有数据命令： select * from 表名;</li>
+<li>查看相关类型数据命令： select 字段,字段 from 表名;</li>
+<li>查询指定字段命令： select 字段 from 表名;</li>
+<li>查询前几行数据命令： 如：查看表中前行数据 select * from 表名 limit 0,2;</li>
+<li>插入数据类型命令： alter table 表名 add 字段 数据类型;</li>
+<li>清空表内数据命令： delete from 表名;</li>
+<li>清空表 自增id，下次从1开始 truncate table 表名;</li>
+</ul>
+<p><strong>第二种</strong><br>（注意：这个是你通过delete from table 之后 设置的。不然不起作用）</p>
+<p>如果表中的数据还有用，那么需要从特定的某一个值开始自动增长的话，做法如下<br>比如你想让id从2开始自动增长，sql如下</p>
+<p>alter table jx_pcmx AUTO_INCREMENT 2;</p>
+<p>alter table jx_pcmx AUTO_INCREMENT 此处写你想让id从几开始增长的数字；</p>
+<p>·<strong>删除表中数据命令</strong>： 如：删除表中编号为1的记录 delete from 表名 where id=1;</p>
+<p>·<strong>修改表中数据命令</strong>： update 表名 set 字段=新值 where条件 如：update 表名 set name=’Mary’where id=1;</p>
+<p>·<strong>在表中增加字段命令</strong>： alter table 表名 add字段 类型 其他;<br>—例如：在表MyClass中添加了一个字段passtest，类型为int(4)，默认值为空<br>mysql&gt; alter table MyClass add passtest int(4) default ‘’;</p>
+<p>·<strong>选取字段插入多条记录命令</strong>： insert into 表名(字段名1，字段名2,….） values(值1,值2,…),(值1,值2,…)…;</p>
+<p>·<strong>全部字段插入多条记录命令</strong>： insert into 表名 values(值1，值2,…),(值1，值2,…)…;</p>
+<p>·<strong>使用as 给字段起别名命令</strong>： select 原字段名 as 新字段名 from 表名; 查询出来的结果字段名不是原字段名，变成了新字段名</p>
+<p>·<strong>使用distinct可以消除重复数据</strong> select distinct 字段名,distince 字段名 from student; 查询出来的性别（字段名）和年龄（字段名）没有重复的数据</p>
+<p><strong><em>MySQL支持多种类型 大致可以分为三类：数值、日期/时间 和 字符串(字符)类型。</em></strong></p>
+<h2 id="常用字段类型："><a href="#常用字段类型：" class="headerlink" title="常用字段类型："></a>常用字段类型：</h2><p><strong>·整形</strong>：<br>- tinyint(m) 1个字节 范围（-128···127）</p>
+<p>- int(m) 4个字节 范围（-2147483648···2147483647）</p>
+<p>- bigint(m） 8个字节 范围 （+-9.22*10的18次方）</p>
+<p>·  <strong>浮点型：</strong> # 一般应用于身高体重之类</p>
+<p><em>- float(m,d) 单精度浮点型 8位精度（4字节） m总个数， d小位数</em></p>
+<p>- double(m,d) 双精度浮点型 16位精度（8字节） m总个数， d小位数</p>
+<p><strong>·定点数</strong> # 精确值 一般应用于与钱相关之类的<br>- decimal(m,d) 参数 m &lt; 65 是总个数，d&lt;30 且 d&lt;m 是小位数</p>
+<p>·<strong>字符串</strong>：<br>- chr(n) 固定长度 最多255个字符 # 查询速度快，但占固定内存，空间消耗大</p>
+<p>- varchar(n) 不固定长度 最多65535个字符 #占用内存灵活，节省空间，但查询速度慢</p>
+<p>- text 可变长度，最多65535个字符 # 不确定长度时使用</p>
+<p>- <strong><em>小总结</em></strong>：<br>char比varchar查询更快<br>varchar比char占用资源少<br>char是定长，最多255<br>varchar是不定长，最多65535<br>char(n)若存入字符数小于n,则以空格补于其后，查询之时再将空格去掉，所以char类型存储的字符串末尾不能有空格，varchar不限于此。<br>char(n)固定长度，char(4)不管是存入几个字符，都将占用4个字节，varchar是存入的实际字符数+1个字节（n&lt;=255)或两个字节(n&gt;255),所以varchar(4)存入3个字符都将占用4个字节<br>decimal(m,n)非常精确的小数</p>
+<p><strong>时间/日期类型</strong>：</p>
+<ul>
+<li>date 日期 如：’2018-12-5’</li>
+<li>time 时间 如：’12:33:55’</li>
+<li>datetime 日期时间 如:’2018-12-2 22:06:44’</li>
+<li>timestamp 自动存储记录修改时间</li>
+</ul>
+<h3 id="数据类型的属性："><a href="#数据类型的属性：" class="headerlink" title="数据类型的属性："></a>数据类型的属性：</h3><ul>
+<li><p>null 数据可包含null值</p>
+</li>
+<li><p>not null 数据不可包含null值</p>
+</li>
+<li><p>default 默认值</p>
+</li>
+<li><p>primary key 主键</p>
+</li>
+<li><p>auto_increment 自动递增，适用于整数类型</p>
+</li>
+<li><p>unsigned 无符号</p>
+</li>
+<li><p>character set 指定一个字符集<br>name</p>
+</li>
+<li><p>bit 称为位数据类型 0是假 1是真 作为逻辑变量使用，用来表示真、假或是、否等二值选择</p>
+</li>
+</ul>
+<p><strong>常用权限的解释</strong>：</p>
+<ul>
+<li><p>file 在MySQL服务器上读写文件。</p>
+</li>
+<li><p>process 显示或杀死属于其它用户的服务线程。</p>
+</li>
+<li><p>reload 重载访问控制表，刷新日志等。</p>
+</li>
+<li><p>shutdown 关闭MySQL服务</p>
+</li>
+</ul>
+<p><strong>数据库/数据表/数据列权限</strong>：</p>
+<ul>
+<li>alter 修改已存在的数据表(例如增加/删除列)和索引。</li>
+</ul>
+<ul>
+<li>create 建立新的数据库或数据表。</li>
+<li>delete 删除表的记录。</li>
+<li>drop 删除数据库或数据表</li>
+<li>index 建立或删除索引</li>
+<li>insert 增加表的记录</li>
+<li>select 显示/搜索表的记录</li>
+<li>update 修改表中已存在的记录</li>
+<li>enum 枚举类型</li>
+</ul>
+<p><strong>特别的权限：</strong></p>
+<ul>
+<li>all 允许做任何事（和root一样）</li>
+</ul>
+<ul>
+<li>·usage 只允许登录–其它什么也不允许做。</li>
+</ul>
+<p><strong>条件查询</strong>：<br>使用where子句对表中的数据筛选，结果为true的行会出现在结果集中<br>where后面支持多种运算符，进行条件的处理</p>
+<ul>
+<li><p>比较运算符： &gt; &lt; &lt;= &gt;= = != is<br>select * from 表名 where 条件;</p>
+</li>
+<li><p>逻辑运算符：and or not<br>select * from 表名 where 条件;</p>
+</li>
+<li><p>范围查询 between…and…<br>例： （左闭右闭，左右都包含）<br>select 字段 from 表名 where 字段 between 开始区间 and 结束区间；</p>
+</li>
+<li><p>模糊查询 like %表示任意多个任意字符 <em>表示一个任意字符<br>例： % 和 _ 可以加在任意位置、<br>select * from 表名 where 字段 like ‘字符元素%’;<br>select * from 表名 where 字段 like ‘%字符元素’;<br>select * from 表名 where 字段 like ‘字符元素</em>‘;<br>select * from 表名 where 字段 like ‘_字符元素’;</p>
+</li>
+<li><p>判非空 is not null<br>例： select * from 表名 where 字段 is not null;</p>
+</li>
+</ul>
+<p><strong>优先级：</strong><br>优先级由高到低的顺序为：小括号，not，比较运算符，逻辑运算符<br>and比or先运算，如果同时出现并希望先算or，需要结合()使用</p>
+<ul>
+<li>排序： 默认升序 升序|降序<br>语法： select * from 表名 order by 字段名 asc|desc</li>
+</ul>
+<p><strong>说明</strong>：<br>将行数据按照列1进行排序，如果某些行列1的值相同时，则按照列2排序，以此类推<br>默认按照列值从小到大排列（asc）<br>asc从小到大排列，即升序<br>desc从大到小排序，即降序<br>多次排序优先执行前面的命令</p>
+<h4 id="聚合函数："><a href="#聚合函数：" class="headerlink" title="聚合函数："></a>聚合函数：</h4><ul>
+<li><p>总数： count(<em>) 表示计算总行数，括号中写星与列名，结果是相同的<br>select count(</em>) from 表名;</p>
+</li>
+<li><p>最大值： max(字段名) 表示求此列的最大值<br>select max(字段名) from 表名; 或 select max(字段名1) from 表名 where 字段名2=定值;</p>
+</li>
+<li><p>最小值： min(字段名) 表示求此列的最小值<br>select min(字段名) from 表名; 或 select min(字段名1) from 表名 where 字段名2=定值;</p>
+</li>
+<li><p>求和： sum(字段名)表示求此列的和<br>select sum(字段名) from 表名; 或 select sum(字段名1) from 表名 where 字段名2=定值;</p>
+</li>
+<li><p>平均值： avg(字段名)表示求此列的平均值<br>select avg(字段名) from 表名; 或 select avg(字段名1) from 表名 where 字段名2=定值 and 字段名3=定值;</p>
+</li>
+<li><p>分组： group by<br>select 字段名1 from 表名 group by 字段名1; 或 select avg(字段名1) from 表名 where 字段名2=定值 and 字段名3=定值;<br><strong>说明：</strong><br>group by的含义:将查询结果按照1个或多个字段进行分组，字段值相同的为一组<br>group by可用于单个字段分组，也可用于多个字段分组</p>
+</li>
+</ul>
+<p>这些还可以这么用：</p>
+<ul>
+<li><p>语法注意：</p>
+<ul>
+<li>select @1,字段1 from 表名 group by 字段1<br>或 select 字段1,@1 from 表名 where 条件 group by 字段1;<br>@1 — 位置只能放聚合函数、group_concat和分组的字段</li>
+</ul>
+</li>
+<li><p>统计分组：<br>例： select avg(字段名1),字段名2 from 表名 group by 字段名2;<br>例： select count(字段名1),字段名2 from 表名 group by 字段名2;</p>
+</li>
+</ul>
+<p><strong>·嵌套查询</strong>：<br>例： select *from 表名 where 字段名1=(select min(字段名1) from 表名);</p>
+<p>·group by + group_concat()<br>group_concat(字段名)可以作为一个输出字段来使用，<br>表示分组之后，根据分组结果，使用group_concat()来放置每一组的某字段的值的集合<br>例： select 字段名1,group_concat(字段名2) from 表名 group by 字段名1；<br>或 select 字段1,group_concat(字段2) from 表名 where 条件 group by 字段1;</p>
+<p><strong>·group by + 集合函数</strong><br>通过group_concat()的启发，我们既然可以统计出每个分组的某字段的值的集合，那么我们也可以通过集合函数来对这个值的集合做一些操作<br>例： select 字段名1,group_concat(字段名2) from 表名 group by 字段名1;<br>select 字段名1,count(*) from 表名 group by 字段名;</p>
+<p>·group by + having<br>having 条件表达式：用来分组查询后指定一些条件来输出查询结果<br>本质：having作用和where一样，但having只能用于group by<br>例： select gender,count(<em>) from 表名 group by 字段名 having count(</em>)&gt;数值;</p>
+<p>·group by + with rollup<br>with rollup的作用是：在最后新增一行，来记录当前列里所有记录的总和<br>例： select 字段名1,count(*) from 表名 group by 字段名1 with rollup;<br>select 字段名1,group_concat(字段名2) from 表名 group by 字段名1 with rollup;</p>
+<p>完整的select语句顺序：<br>select distince *<br>from 表名<br>where …<br>group by … having …<br>order by …<br>limit start，count</p>
+<p>select 获取查看<br>from 来自<br>where 后面加条件<br>group by 分组<br>having 对分组后的组进一步筛选<br>limit（m,n） 分页 m 起始位置 n 每页多少条数据<br>count（） 总揽条数 括号里可以加条件 总览某种数据<br>group_concat() 合并多个分组 括号里添加要合并的数据类型</p>
+<p>·<strong>where、having之间的区别和用法</strong><br>作用的对象不同。WHERE 子句作用于表和视图，HAVING 子句作用于组。<br>聚合函数是比较where、having 的关键。<br>where、聚合函数、having 在from后面的执行顺序：where&gt;聚合函数(sum,min,max,avg,count)&gt;having<br>列出group by来比较二者。（）因where和having 在使用group by时问的最多）<br>若须引入聚合函数来对group by 结果进行过滤 则只能用having。</p>
+<p>注意事项 ：</p>
+<p>1、where 后不能跟聚合函数，因为where执行顺序大于聚合函数。</p>
+<p>2、where 子句的作用是在对查询结果进行分组前，将不符合where条件的行去掉，<br>即在分组之前过滤数据，条件中不能包含聚组函数，使用where条件显示特定的行。</p>
+<p>3、having 子句的作用是筛选满足条件的组，即在分组之后过滤数据，条件中经常<br>包含聚组函数，使用having 条件显示特定的组，也可以使用多个分组标准进行分组。</p>
+<p><strong>分页：</strong><br>分页：select *from 表名 limit 起始位置start,行数计数count;<br>或 select *from 表名 where 条件 limit 起始位置start,行数计数count;</p>
+<p><strong>分页翻页</strong><br>已知：每页显示m条数据，当前显示第n页<br>求总页数：此段逻辑后面会在python中实现<br>查询总条数p1<br>使用p1除以m得到p2<br>如果整除则p2为总数页<br>如果不整除则p2+1为总页数<br>求第n页的数据<br>例： select <em>from 表名 limit (n-1)</em>m,m;</p>
+<p><strong>内连接查询：查询的结果为两个表匹配到的数据</strong><br>语法1： inner join on<br>select *from 左表名 inner join 右表名 on 左表名.两表相关联字段 = 右表名.两表相关联字段;<br>或 select *from 左表名 inner join 右表名 on 左表名.两表相关联字段 = 右表名.两表相关联字段<br>where 右表名.条件字段=值 and 左表名.条件字段&gt;值;</p>
+<p>例： 如查看不同年级 每个年级都有谁 每个年级都有多少人<br>select class.name,group_concat(student.name),count(student.id)<br>from student inner join class on<br>class.id=student.class_id group by class.name;</p>
+<p>语法2：<br>select 左表名.字段1,group_concat(右表名.字段1),count(右表名.两表相关联字段)<br>from 右表名 inner join 左表名 on<br>左表名.两表相关联字段=右表名.两表相联关字段 group by 左表名.字段一;</p>
+<p>右连接查询： right join on<br>查询的结果为两个表匹配到的数据，右表特有的数据，对于左表中不存在的数据使用null填充</p>
+<p>语法：<br>select *from 右表名 right join 左表名 on 右表名.两表相关联字段 = 左表名.两表相关联字段;</p>
+<p>左连接查询： left join on<br>查询的结果为两个表匹配到的数据，左表特有的数据，对于右表中不存在的数据使用null填充</p>
+<p>语法：<br>select *from 左表名 left join 右表名 on 左表名.两表相关联字段 = 右表名.两表相关联字段;</p>
+<p>查询表中 某字段重复数据的个数和最多的个数<br>select 字段1,count(*) as count from 表名 group by 字段1 having max(count);</p>
+<p>select 字段1,count(*) as count from 表名 as a group by 字段1 having max(count) order by 字段1,count limit 0,1;</p>
+<p>视图<br>MySql创建视图<br>(1).第一类：create view 视图名 as select * from 表名;</p>
+<p>(2).第二类：create view 视图名 as select 字段,字段,字段 from 表名;</p>
+<p>(3).第三类：create view 视图名v[vid,vname,vage] as select 字段,字段,字段 from 表名<br>删除视图<br>drop view 视图名；</p>
+<p>mysql中去重 distinct</p>
+<p>explain select 字段1 from 表名 where 字段1=值; 查看查找次数</p>
+<p>create index 索引名 on 表名(相关字段); 加索引</p>
+<p>drop index 索引名 on 表名; 删除索引</p>
+<p>外键 alter table 表名1 add constraint 外键名字 foreign key(列名1) references 表名2(列名2)；</p>
+<h2 id="pymysql-交互："><a href="#pymysql-交互：" class="headerlink" title="pymysql 交互："></a>pymysql 交互：</h2><p>-<em>- coding: UTF-8 -</em>-</p>
+<h3 id="引入connect"><a href="#引入connect" class="headerlink" title="引入connect"></a>引入connect</h3><p>from pymysql import connect</p>
+<h3 id="建立连接"><a href="#建立连接" class="headerlink" title="建立连接"></a>建立连接</h3><p>conn= connect(host=’localhost’,port=3306,database=’库名’,user=’用户名’,password=’密码’,charset=’utf8’)</p>
+<h3 id="获取cursor对象"><a href="#获取cursor对象" class="headerlink" title="获取cursor对象"></a>获取cursor对象</h3><p>cur = conn.cursor()</p>
+<h3 id="执行sql语句"><a href="#执行sql语句" class="headerlink" title="执行sql语句"></a>执行sql语句</h3><p>sql =”sql 语句命令”<br>cur.execute(sql)</p>
+<h3 id="取出数据-fetchone-取一条数据-fetchall-取多条数据"><a href="#取出数据-fetchone-取一条数据-fetchall-取多条数据" class="headerlink" title="取出数据 fetchone 取一条数据 fetchall 取多条数据"></a>取出数据 fetchone 取一条数据 fetchall 取多条数据</h3><p>data=cur.fetchall()</p>
+<h3 id="定义一个列表"><a href="#定义一个列表" class="headerlink" title="定义一个列表"></a>定义一个列表</h3><p>userlist = []<br>for i in data:</p>
+<h3 id="定义一个字典来存放信息"><a href="#定义一个字典来存放信息" class="headerlink" title="定义一个字典来存放信息"></a>定义一个字典来存放信息</h3><p>userdict = {}<br>userdict[‘字段’] = i[-1] # 索引位置信息<br>userdict[‘字段’] = i[1]<br>userdict[‘字段’] = i[2]<br>userdict[‘带小数字段’] = float(i[3])<br>userlist.append(userdict) # 添加元素</p>
+<p>print(data)</p>
+<h3 id="输出"><a href="#输出" class="headerlink" title="输出"></a>输出</h3><p>print(userlist)</p>
+<p>#关闭连接<br>cur.close()<br>conn.close()</p>
+<h3 id="导入模块"><a href="#导入模块" class="headerlink" title="导入模块"></a>导入模块</h3><p>from pymysql import connect</p>
+<h3 id="建立连接-1"><a href="#建立连接-1" class="headerlink" title="建立连接"></a>建立连接</h3><p>ck = connect(host=’localhost’,port=3306,database=’库名’,user=’用户名’,password=’密码’,charset=’utf8’)</p>
+<h3 id="获取cursor对象-1"><a href="#获取cursor对象-1" class="headerlink" title="获取cursor对象"></a>获取cursor对象</h3><p>con = ck.cursor()</p>
+<h3 id="执行sql语句-1"><a href="#执行sql语句-1" class="headerlink" title="执行sql语句"></a>执行sql语句</h3><p>con .execute(“sql 命令语句”)</p>
+<h3 id="提交"><a href="#提交" class="headerlink" title="提交"></a>提交</h3><p>ck.commit()</p>
+<p>‘’’<br>host 主机<br>localhost 本地主机<br>port 端口<br>database 数据库<br>user 用户<br>password 密码<br>charset 字符集<br>‘’’</p>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://kangyuetao.github.io">kangyuetao</a></p><p> <span>Link:  </span><a href="https://kangyuetao.github.io/64230/">https://kangyuetao.github.io/64230/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/31507/" title="Mysql事物的四大特性与隔离级别"><span>< PreviousPost</span><br><span class="prevTitle">Mysql事物的四大特性与隔离级别</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#MYSQL常用命令："><span class="toc-number">1.</span> <span class="toc-text">MYSQL常用命令：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#MYSQL开启关闭及查询时间版本指令："><span class="toc-number">1.1.</span> <span class="toc-text">MYSQL开启关闭及查询时间版本指令：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#修改用户名及密码相关指令："><span class="toc-number">1.2.</span> <span class="toc-text">修改用户名及密码相关指令：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#创建库的相关指令："><span class="toc-number">1.3.</span> <span class="toc-text">创建库的相关指令：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建表相关指令："><span class="toc-number">1.4.</span> <span class="toc-text">建表相关指令：</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#插入数据相关命令："><span class="toc-number">1.5.</span> <span class="toc-text">插入数据相关命令：</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#常用字段类型："><span class="toc-number">2.</span> <span class="toc-text">常用字段类型：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#数据类型的属性："><span class="toc-number">2.1.</span> <span class="toc-text">数据类型的属性：</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#聚合函数："><span class="toc-number">2.1.1.</span> <span class="toc-text">聚合函数：</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#pymysql-交互："><span class="toc-number">3.</span> <span class="toc-text">pymysql 交互：</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#引入connect"><span class="toc-number">3.1.</span> <span class="toc-text">引入connect</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立连接"><span class="toc-number">3.2.</span> <span class="toc-text">建立连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取cursor对象"><span class="toc-number">3.3.</span> <span class="toc-text">获取cursor对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行sql语句"><span class="toc-number">3.4.</span> <span class="toc-text">执行sql语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#取出数据-fetchone-取一条数据-fetchall-取多条数据"><span class="toc-number">3.5.</span> <span class="toc-text">取出数据 fetchone 取一条数据 fetchall 取多条数据</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定义一个列表"><span class="toc-number">3.6.</span> <span class="toc-text">定义一个列表</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#定义一个字典来存放信息"><span class="toc-number">3.7.</span> <span class="toc-text">定义一个字典来存放信息</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#输出"><span class="toc-number">3.8.</span> <span class="toc-text">输出</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#导入模块"><span class="toc-number">3.9.</span> <span class="toc-text">导入模块</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#建立连接-1"><span class="toc-number">3.10.</span> <span class="toc-text">建立连接</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#获取cursor对象-1"><span class="toc-number">3.11.</span> <span class="toc-text">获取cursor对象</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#执行sql语句-1"><span class="toc-number">3.12.</span> <span class="toc-text">执行sql语句</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#提交"><span class="toc-number">3.13.</span> <span class="toc-text">提交</span></a></li></ol></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i><script type="text/javascript" src="/js/xiantiao.js"></script>
+<script type="text/javascript" src="/js/click.js"></script></body></html>

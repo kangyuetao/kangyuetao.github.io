@@ -1,0 +1,113 @@
+<!DOCTYPE html><html><head><meta name="generator" content="Hexo 3.9.0"><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no"><meta name="author" content="kangyuetao"><meta name="renderer" content="webkit"><meta name="copyright" content="kangyuetao"><meta name="keywords" content="欢迎飞跃技术博客"><meta name="description" content="null"><meta name="Cache-Control" content="no-cache"><meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1"><title>Python中的基本数据类型的区别 · Mr.Kang's Blog</title><link rel="stylesheet" href="/css/style.css?v=2018.7.9"><link rel="stylesheet" href="/css/animation.css?v=2018.7.9"><link rel="icon" href="/img/assets/favicon.ico"><link rel="stylesheet" href="https://cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css?version=1.5.6"><!-- scripts--><script>(function( w ){
+  "use strict";
+  // rel=preload support test
+  if( !w.loadCSS ){
+    w.loadCSS = function(){};
+  }
+  // define on the loadCSS obj
+  var rp = loadCSS.relpreload = {};
+  // rel=preload feature support test
+  // runs once and returns a function for compat purposes
+  rp.support = (function(){
+    var ret;
+    try {
+      ret = w.document.createElement( "link" ).relList.supports( "preload" );
+    } catch (e) {
+      ret = false;
+    }
+    return function(){
+      return ret;
+    };
+  })();
+
+  // if preload isn't supported, get an asynchronous load by using a non-matching media attribute
+  // then change that media back to its intended value on load
+  rp.bindMediaToggle = function( link ){
+    // remember existing media attr for ultimate state, or default to 'all'
+    var finalMedia = link.media || "all";
+
+    function enableStylesheet(){
+      link.media = finalMedia;
+    }
+
+    // bind load handlers to enable media
+    if( link.addEventListener ){
+      link.addEventListener( "load", enableStylesheet );
+    } else if( link.attachEvent ){
+      link.attachEvent( "onload", enableStylesheet );
+    }
+
+    // Set rel and non-applicable media type to start an async request
+    // note: timeout allows this to happen async to let rendering continue in IE
+    setTimeout(function(){
+      link.rel = "stylesheet";
+      link.media = "only x";
+    });
+    // also enable media after 3 seconds,
+    // which will catch very old browsers (android 2.x, old firefox) that don't support onload on link
+    setTimeout( enableStylesheet, 3000 );
+  };
+
+  // loop through link elements in DOM
+  rp.poly = function(){
+    // double check this to prevent external calls from running
+    if( rp.support() ){
+      return;
+    }
+    var links = w.document.getElementsByTagName( "link" );
+    for( var i = 0; i < links.length; i++ ){
+      var link = links[ i ];
+      // qualify links to those with rel=preload and as=style attrs
+      if( link.rel === "preload" && link.getAttribute( "as" ) === "style" && !link.getAttribute( "data-loadcss" ) ){
+        // prevent rerunning on link
+        link.setAttribute( "data-loadcss", true );
+        // bind listeners to toggle media back
+        rp.bindMediaToggle( link );
+      }
+    }
+  };
+
+  // if unsupported, run the polyfill
+  if( !rp.support() ){
+    // run once at least
+    rp.poly();
+
+    // rerun poly on an interval until onload
+    var run = w.setInterval( rp.poly, 500 );
+    if( w.addEventListener ){
+      w.addEventListener( "load", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    } else if( w.attachEvent ){
+      w.attachEvent( "onload", function(){
+        rp.poly();
+        w.clearInterval( run );
+      } );
+    }
+  }
+
+
+  // commonjs
+  if( typeof exports !== "undefined" ){
+    exports.loadCSS = loadCSS;
+  }
+  else {
+    w.loadCSS = loadCSS;
+  }
+}( typeof global !== "undefined" ? global : this ) );</script><script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js" defer></script><script src="/js/main.js?v=2018.7.9" defer></script><!-- fancybox--><link rel="preload" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.css" as="style" onload="this.onload=null;this.rel='stylesheet'"><script src="https://cdnjs.cloudflare.com/ajax/libs/fancybox/3.2.5/jquery.fancybox.min.js" defer></script><!-- busuanzi--><script async src="//dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js"></script></head><body><section class="profile-close" id="cxo-profile"><div class="profile-avatar"><i class="fa fa-caret-left"></i><img src="/img/assets/cat.png"></div><!--.profile-saying
+  i.fa.fa-comment
+  .saying--><div class="cxo-profile-inner"><div class="profile-name">kangyuetao</div><div class="profile-signature">for me</div><div class="friends"><div>FRIENDS</div><span><a href="//kangyuetao.github.io/" target="_black">friend1</a></span><span><a href="//kangyuetao.github.io/" target="_black">friend2</a></span><span><a href="//kangyuetao.github.io/" target="_black">friend3</a></span></div><div class="read-progress"></div></div></section><header id="cxo-intro" style="height: 70vh;background-image: url(/img/intro/index-bg.jpg);"><nav id="cxo-intro-nav"><section><div class="intro-nav-title"><a href="/">Mr.Kang's Blog</a></div><div class="intro-nav-label-box"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div><i class="fa fa-bars intro-nav-menu"><div class="intro-nav-drop"><a href="/">Home</a><a href="/about/">About</a><a href="/archives/">Archives</a><a href="/tags/">Tags</a></div></i><div class="clear"></div></section></nav><h1 class="post-title">Python中的基本数据类型的区别</h1><div class="post-intros"><div class="post-intro-meta"><span class="post-intro-time"><i class="post-intro-calendar fa fa-calendar"></i><span>2016-03-25</span></span><span class="post-intro-tags"><a class="intro-tag fa fa-tag" href="javascript:void(0)" date-tags="python"> python</a></span></div><div class="post-intro-read"><span> Word count: <span class="post-count">469</span> | Reading time: <span class="post-count">1</span>min</span></div></div></header><article class="cxo-up" id="cxo-content-outer"><section id="cxo-content-inner"><article class="article-entry" id="post"><h3 id="set集合和dict字典的区别"><a href="#set集合和dict字典的区别" class="headerlink" title="set集合和dict字典的区别"></a>set集合和dict字典的区别</h3><p>1.唯一区别： set没有对应的value值<br>2.两者都是可变类型，即不可哈希<br>3.两者的内部元素是不可变类型，即可哈希<br><code>利用哈希算法，进行计算元素在存在的生命周期中有对应唯一的哈希值，就是可哈希，不存在就是可改变的。</code><br>4.都无索引，不可进行切片和根据索引进行的操作</p>
+<h3 id="set集合和list列表的区别"><a href="#set集合和list列表的区别" class="headerlink" title="set集合和list列表的区别"></a>set集合和list列表的区别</h3><p>1.相同点<br>    – 都是可变类型<br>2.不同点<br>    – set集合是无序且元素唯一<br>    – set集合取得元素只能for循环，否则因为是无序的，无索引<br>    – list列表是有序且元素不唯一，可以根据索引进行切片<br>    – list列表是<strong>分离式结构</strong>的动态顺序表(是有索引的原因)<br><code>顺序表分为：</code></p>
+<ol>
+<li><p><code>一体式结构： 存储表信息的单元和存储区连续在一个存储区间。</code></p>
+</li>
+<li><p><code>分离式结构： 存储表信息的单元只保存容量和元素的个数，实际数据元素存储在另一个存储区，通过链接去关联。</code></p>
+<p>  – set集合主要用于测试数据和数据的交、并、差等此类型的和去重操作<br>  – set集合本质区别和dict字典相同</p>
+<h3 id="list列表和dict字典的区别"><a href="#list列表和dict字典的区别" class="headerlink" title="list列表和dict字典的区别"></a>list列表和dict字典的区别</h3><p>1.相同点：<br>   可变类型<br>   可迭代<br>2.不同点：<br>   dict字典的key必须是不可变对象<br>   dict字典需要的存储空间大于list列表<br>   查询效率字典远高于列表</p>
+<h3 id="tuple元组和list列表的区别"><a href="#tuple元组和list列表的区别" class="headerlink" title="tuple元组和list列表的区别"></a>tuple元组和list列表的区别</h3><p>1.不同点：<br>   tuple对象创建后就不可变<br>   创建对象的方式：list = [“元素”] tuple=(“元素”,)<br>2.相同点：<br>   可迭代</p>
+<h3 id="tuple元组、字符串、数字"><a href="#tuple元组、字符串、数字" class="headerlink" title="tuple元组、字符串、数字"></a>tuple元组、字符串、数字</h3><p>​    不可变类型（可哈希），不可以进行更改元素<br>​    元组可以包含可变类型</p>
+</li>
+</ol>
+</article><!-- lincense--><div class="license-wrapper"><p> <span>Author:  </span><a href="https://kangyuetao.github.io">kangyuetao</a></p><p> <span>Link:  </span><a href="https://kangyuetao.github.io/16800/">https://kangyuetao.github.io/16800/</a></p><p> <span>Copyright:  </span><span>All articles in this blog are licensed under <a rel="license" href="https://creativecommons.org/licenses/by-nc-nd/3.0">CC BY-NC-SA 3.0</a> unless stating additionally.</span></p></div><div class="post-paginator"><a class="prevSlogan" href="/43098/" title="面向对象的三大特性"><span>< PreviousPost</span><br><span class="prevTitle">面向对象的三大特性</span></a><a class="nextSlogan" href="/31507/" title="Mysql事物的四大特性与隔离级别"><span>NextPost ></span><br><span class="nextTitle">Mysql事物的四大特性与隔离级别</span></a><div class="clear"></div></div><div id="comment"></div></section></article><footer id="cxo-footer-outer"><div id="cxo-footer-inner"><p class="footer-container"><span>Site by </span><a href="http://hexo.io"><span>Hexo</span></a><span> | theme </span><a href="https://github.com/Longlongyu/hexo-theme-Cxo"><span>Cxo</span></a></p><i class="fa fa-user"> </i><span id="busuanzi_value_site_uv"></span><span> | </span><i class="fa fa-eye"> </i><span id="busuanzi_value_site_pv"></span></div></footer><!-- catelog--><div class="toc-wrapper" style="top: 70vh;"><div class="toc-catalog"><i class="fa fa-list"> </i><span>CATALOG</span></div><ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#set集合和dict字典的区别"><span class="toc-number">1.</span> <span class="toc-text">set集合和dict字典的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#set集合和list列表的区别"><span class="toc-number">2.</span> <span class="toc-text">set集合和list列表的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#list列表和dict字典的区别"><span class="toc-number">3.</span> <span class="toc-text">list列表和dict字典的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tuple元组和list列表的区别"><span class="toc-number">4.</span> <span class="toc-text">tuple元组和list列表的区别</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#tuple元组、字符串、数字"><span class="toc-number">5.</span> <span class="toc-text">tuple元组、字符串、数字</span></a></li></ol></div><!-- top--><i class="fa fa-arrow-up close" id="go-up" aria-hidden="true"></i><script type="text/javascript" src="/js/xiantiao.js"></script>
+<script type="text/javascript" src="/js/click.js"></script></body></html>
